@@ -1,0 +1,34 @@
+<div>
+  <br />
+  <div>
+    Posted by {{c.user}} on {{c.created.strftime("%b %d, %Y")}}
+  </div>
+
+  <div>
+    {{c._render_text | safe}}
+  </div>
+  <table>
+    <tr>
+      <td>
+        <form action="/blog/likecomment/{{c.key().parent().id()}},{{c.key().id()}},1" method="post">
+          <input type="submit" value="Like" />
+        </form>
+      </td>
+      <td>
+        <form action="/blog/likecomment/{{c.key().parent().id()}},{{c.key().id()}},-1" method="post">
+        <input type="submit" value="Dislike" />
+        </form>
+      </td>
+      <td>
+        <a href="/blog/editcomment/{{c.key().id()}}?post_id={{c.key().parent().id()}}">
+          <button>Edit</button>
+        </a>
+      </td>
+      <td>
+        <form action="/blog/deletecomment/{{c.key().parent().id()}},{{c.key().id()}}" method=post>
+          <input type="submit" value="Delete" />
+        </form>
+      </td>
+    </tr>
+  </table>
+</div>

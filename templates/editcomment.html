@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form action="/blog/editcomment/{{c.key().parent().id()}},{{c.key().id()}}" method="post" >
+    <table>
+
+    <tr>
+      <td>Comment:</td>
+      <td>
+          <textarea name="content">{{c.content}}</textarea>
+      </td>
+      <td>
+          {{error}}
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <button>Submit</button>
+      </td>
+    </tr>
+  </table>
+{% endblock %}

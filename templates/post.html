@@ -1,0 +1,39 @@
+<div>
+  <div>
+    <a href="/blog/{{p.key().id()}}">{{p.subject}}</a>
+    <br />
+    Submitted by {{p.user}}
+    <br />
+    On {{p.created.strftime("%b %d, %Y")}}
+  </div>
+
+  <div>
+    {{p._render_text | safe}}
+  </div>
+  <table>
+    <tr>
+      <td>
+        <form action="/blog/likepage/{{p.key().id()}},1" method="post">
+          <input type="submit" value="Like" />
+        </form>
+      </td>
+      <td>
+        <form action="/blog/likepage/{{p.key().id()}},-1" method="post">
+        <input type="submit" value="Dislike" />
+        </form>
+      </td>
+      <td>
+        <form action="/blog/editpage/{{p.key().id()}}" method="get">
+          <input type="submit" value="Edit" />
+        </form>
+      </td>
+      <td>
+        <form action="/blog/deletepage/{{p.key().id()}}" method="post">
+          <input type="submit" value="Delete" />
+        </form>
+      </td>
+    </tr>
+  </table>
+
+
+</div>

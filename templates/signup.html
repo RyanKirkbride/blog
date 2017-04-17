@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form method="post" >
+    <table>
+      <tr>
+        <td>Username:</td>
+        <td>
+          <input type="text" name="user" value="{{user|default("", True)}}"/>
+        </td>
+        <td>
+            {{user_error}}
+        </td>
+      </tr>
+
+    <tr>
+      <td>Password:</td>
+      <td>
+        <input type="password" name="password"/>
+      </td>
+      <td>
+          {{pass_error}}
+      </td>
+    </tr>
+    <tr>
+      <td>Verify Password:</td>
+      <td>
+        <input type="password" name="verify"/>
+      </td>
+      <td>
+          {{ver_error}}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Email(Optional):
+      </td>
+      <td>
+        <input type="text" name="email" value="{{email}}"/>
+      </td>
+      <td>
+          {{email_error}}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <button>Submit</button>
+      </td>
+    </tr>
+  </table>
+</form>
+
+
+{% endblock %}

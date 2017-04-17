@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+  {{post.render() | safe}}
+  Likes: {{p_likes}} <br />
+  Dislikes: {{p_dislikes}} <br />
+
+{% if error %}
+  <br />  <h4 style="color: red">{{error}}</h4>
+{% endif %}
+
+  <div>
+    <form method="post">
+      <table>
+        <tr>
+          <td>
+            Comment:
+          </td>
+          <td>
+            <textarea name = "comment"></textarea>
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            <button>Submit</button>
+          </td>
+        </tr>
+      </table>
+    </form>
+  </div>
+
+  <h3>Comments</h3>
+
+  {% for c in comments %}
+      {{c.render() | safe}}
+      Likes: {{c_likes.pop(0)}}
+      <br />
+      Dislikes: {{c_dislikes.pop(0)}}<br />
+  {% endfor %}
+
+
+{% endblock %}
