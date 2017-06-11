@@ -64,11 +64,6 @@ def render_post(response, post):
     response.out.write('<b>' + post.subject + '</b><br>')
     response.out.write(post.content)
 
-class MainPage(BlogHandler):
-  def get(self):
-      self.write('Hello, Udacity!')
-
-
 ##### user stuff
 def make_salt(length = 5):
     return ''.join(random.choice(letters) for x in xrange(length))
@@ -141,17 +136,21 @@ class Comment(db.Model):
         self._render_text = self.content.replace('\n', '<br>')
         return render_str("comment.html", c = self)
 
+      
 class Like(db.Model):
     user = db.StringProperty(required = True)
     like = db.IntegerProperty(required = True)
     comment = db.BooleanProperty(required = True)
 
-
+#displays all blog posts
+    
 class BlogFront(BlogHandler):
     def get(self):
         posts = greetings = Post.all().order('-created')
         self.render('front.html', posts = posts)
 
+# Displays a post in the blog, and allows users to post a comment on the respective post        
+        
 class PostPage(BlogHandler):
   def get(self, post_id, error):
 
@@ -207,6 +206,10 @@ class PostPage(BlogHandler):
         c.put()
         self.redirect('/blog/%s' % post_id)
 
+# allows for editing pages if there is no page with an id matching the one given in the URL
+# the function returns a 404, otherwise it verifies the user is the same as the original poster
+# and either allows them to edit the page or redirects them to the post's page
+        
 class EditPage(BlogHandler):
   def get(self, post_id):
     key = db.Key.from_path('Post', int(post_id), parent=blog_key())
@@ -227,7 +230,10 @@ class EditPage(BlogHandler):
     if not post:
       self.error(404)
       return
-
+    elif post.user != self.user.name:
+      self.redirect("/blog/%s?error=3" % post.key().id())
+      return
+      
     content = self.request.get('content')
 
     if content:
@@ -237,6 +243,8 @@ class EditPage(BlogHandler):
     else:
       self.render("editpage.html", p=post, user=self.user.name)
 
+# Allows a user to delete their own posts      
+      
 class DeletePage(BlogHandler):
     def post(self, post_id):
         if not self.user:
@@ -256,6 +264,8 @@ class DeletePage(BlogHandler):
           else:
             self.redirect('/blog/%s?error=4' % key.id())
 
+# Allows a user to delete their own comments            
+            
 class DeleteComment(BlogHandler):
     def post(self, i):
       if not self.user:
@@ -277,6 +287,10 @@ class DeleteComment(BlogHandler):
         else:
           self.redirect('/blog/%s?error=4' % p.id())
 
+# Allows for editing comments if there is no comment with an id matching the one given in the URL
+# the function returns a 404, otherwise it verifies the user is the same as the original poster
+# and either allows them to edit the comment or redirects them to the comment's post's page
+          
 class EditComment(BlogHandler):
     def get(self, comment_id, i):
       post_id = self.request.get('post_id')
@@ -304,7 +318,10 @@ class EditComment(BlogHandler):
       if not comment:
         self.error(404)
         return
-
+      elif comment.user != self.user.name:
+        self.redirect("/blog/%s?error=3" % post.key().id())
+        return
+      
       content = self.request.get('content')
 
       if content:
@@ -315,6 +332,10 @@ class EditComment(BlogHandler):
       else:
         self.render("editcomment.html", c=comment, user=self.user.name)
 
+# Allows a user to like a post. If the user has already liked the comment 
+# it allows them to unlike, or dislike the comment. If the user tries to like their own
+# post it redirects them and displays an error letting them know that is not allowed                
+        
 class LikePage(BlogHandler):
   def post(self, i):
     if not self.user:
@@ -359,6 +380,10 @@ class LikePage(BlogHandler):
         self.redirect('/blog/%s' % str(post.key().id()))
 
 
+# Allows a user to like a comment. If the user has already liked the comment 
+# it allows them to unlike, or dislike the comment. If the user tries like their own
+# comment it redirects them and displays an error letting them know that is not allowed
+        
 class LikeComment(BlogHandler):
   def post(self, i):
     if not self.user:
@@ -403,7 +428,7 @@ class LikeComment(BlogHandler):
       else:
         self.redirect('/blog/%s' % comment.key().parent().id())
 
-
+# allows a user to create a new post, as long as they are logged in
 class NewPost(BlogHandler):
   def get(self):
     if self.user:
